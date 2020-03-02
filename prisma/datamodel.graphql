@@ -3,4 +3,14 @@ type User {
   name: String!
   email: String! @unique
   password: String!
+  books: [Book!]! @relation(name: "BookToUser", onDelete: CASCADE)
+}
+
+type Book  {
+  id: ID! @id
+  name: String!
+  author: String
+  description: String
+  published_year: String
+  ownerUser: User! @relation(name: "BookToUser", onDelete: SET_NULL)
 }

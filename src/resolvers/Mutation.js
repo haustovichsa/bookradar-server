@@ -51,7 +51,25 @@ const mutation = {
             where: { id: userId },
             data: args.data
         }, info)
-    }
+    },
+
+    async createBook(parent, args, { prisma, request }, info) {
+        const userId = getUserId(request)
+
+        return await prisma.mutation.createBook({
+            data: {
+                name: args.data.name,
+                author: args.data.author,
+                description: args.data.description,
+                published_year: args.data.published_year,
+                ownerUser: {
+                    connect: {
+                        id: userId
+                    }
+                }
+            }
+        }, info)
+    },
 };
 
 export { mutation as default }

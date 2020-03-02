@@ -10,6 +10,7 @@ type Mutation {
     login(data: LoginUserInput!): AuthPayload!
     deleteUser: User!
     updateUser(data: UpdateUserInput!): User!
+    createBook(data: CreateBookInput!): Book!
 }
 
 #type Subscription {
@@ -41,8 +42,25 @@ input UpdateUserInput {
 type User {
     id: ID!
     name: String!
-    email: String
+    email: String!
     password: String!
+    books: [Book!]!
+}
+
+type Book  {
+  id: ID!
+  name: String!
+  author: String
+  description: String
+  published_year: String
+  ownerUser: User!
+}
+
+input CreateBookInput {
+    name: String!
+    author: String!
+    description: String
+    published_year: String
 }
 
 enum MutationType {
