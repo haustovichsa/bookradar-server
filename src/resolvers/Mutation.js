@@ -4,8 +4,14 @@ import generateToken from '../utils/generateToken'
 import hashPassword from '../utils/hashPassword'
 
 const mutation = {
-    async login(parent, args, { prisma }, info) {
-        const user = await prisma.query.user({ where:{ email: args.data.email } })
+    async login(parent, args, {
+        prisma
+    }, info) {
+        const user = await prisma.query.user({
+            where: {
+                email: args.data.email
+            }
+        })
 
         if (!user) {
             throw new Error('Unable to login')
@@ -21,26 +27,39 @@ const mutation = {
             token: generateToken(user.id)
         }
     },
-    async createUser(parent, args, { prisma }, info) {
+    async createUser(parent, args, {
+        prisma
+    }, info) {
         const password = await hashPassword(args.data.password)
 
-        const user = await prisma.mutation.createUser({ 
-            data: { ...args.data, password } 
+        const user = await prisma.mutation.createUser({
+            data: {
+                ...args.data,
+                password
+            }
         })
 
-         return {
+        return {
             user,
             token: generateToken(user.id)
-         };
+        };
     },
-    async deleteUser(parent, args, { prisma, request }, info) {
+    async deleteUser(parent, args, {
+        prisma,
+        request
+    }, info) {
         const userId = getUserId(request);
-    
+
         return prisma.mutation.deleteUser({
-            where: { id: userId }
+            where: {
+                id: userId
+            }
         }, info)
     },
-    async updateUser(parent, args, { prisma, request }, info) {
+    async updateUser(parent, args, {
+        prisma,
+        request
+    }, info) {
         const userId = getUserId(request)
 
         if (typeof args.data.password === 'string') {
@@ -48,21 +67,28 @@ const mutation = {
         }
 
         return prisma.mutation.updateUser({
-            where: { id: userId },
+            where: {
+                id: userId
+            },
             data: args.data
         }, info)
     },
 
-    async createBook(parent, args, { prisma, request }, info) {
+    async createOwnBook(parent, args, {
+        prisma,
+        request
+    }, info) {
         const userId = getUserId(request)
 
-        return await prisma.mutation.createBook({
+        return await prisma.mutation.createOwnBook({
             data: {
                 name: args.data.name,
                 author: args.data.author,
-                description: args.data.description,
                 published_year: args.data.published_year,
-                ownerUser: {
+                genre: args.data.genre,
+                imageId: args.data.imageId,
+                sharingType: args.data.sharingType,
+                user: {
                     connect: {
                         id: userId
                     }
@@ -72,4 +98,7 @@ const mutation = {
     },
 };
 
-export { mutation as default }
+export {
+    mutation as
+    default
+}
