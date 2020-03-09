@@ -12,7 +12,7 @@ type OwnBook  {
   id: ID! @id
   name: String!
   author: String
-  published_year: String
+  published_year: Int
   genre: Int # Fantasy, Adventyre, Mystery, ... [0, 1, 2, ...]
   imageId: String
   sharingType: Int #exchange temporary give_forever [0, 1, 2]

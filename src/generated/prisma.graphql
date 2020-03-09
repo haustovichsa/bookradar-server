@@ -1,15 +1,15 @@
-# source: http://localhost:4466
-# timestamp: Sat Dec 28 2019 19:46:29 GMT+0300 (GMT+03:00)
+# source: http://localhost:4466/book/dev
+# timestamp: Fri Mar 06 2020 12:37:35 GMT+0300 (GMT+03:00)
 
-type AggregateComment {
-  count: Int!
-}
-
-type AggregatePost {
+type AggregateOwnBook {
   count: Int!
 }
 
 type AggregateUser {
+  count: Int!
+}
+
+type AggregateWishBook {
   count: Int!
 }
 
@@ -18,82 +18,141 @@ type BatchPayload {
   count: Long!
 }
 
-type Comment implements Node {
+"""Raw JSON value"""
+scalar Json
+
+"""
+The `Long` scalar type represents non-fractional signed whole numeric values.
+Long can represent values between -(2^63) and 2^63 - 1.
+"""
+scalar Long
+
+type Mutation {
+  createUser(data: UserCreateInput!): User!
+  createOwnBook(data: OwnBookCreateInput!): OwnBook!
+  createWishBook(data: WishBookCreateInput!): WishBook!
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateOwnBook(data: OwnBookUpdateInput!, where: OwnBookWhereUniqueInput!): OwnBook
+  updateWishBook(data: WishBookUpdateInput!, where: WishBookWhereUniqueInput!): WishBook
+  deleteUser(where: UserWhereUniqueInput!): User
+  deleteOwnBook(where: OwnBookWhereUniqueInput!): OwnBook
+  deleteWishBook(where: WishBookWhereUniqueInput!): WishBook
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertOwnBook(where: OwnBookWhereUniqueInput!, create: OwnBookCreateInput!, update: OwnBookUpdateInput!): OwnBook!
+  upsertWishBook(where: WishBookWhereUniqueInput!, create: WishBookCreateInput!, update: WishBookUpdateInput!): WishBook!
+  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  updateManyOwnBooks(data: OwnBookUpdateManyMutationInput!, where: OwnBookWhereInput): BatchPayload!
+  updateManyWishBooks(data: WishBookUpdateManyMutationInput!, where: WishBookWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyOwnBooks(where: OwnBookWhereInput): BatchPayload!
+  deleteManyWishBooks(where: WishBookWhereInput): BatchPayload!
+  executeRaw(database: PrismaDatabase, query: String!): Json!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
   id: ID!
-  text: String!
-  author: User!
-  post: Post!
+}
+
+type OwnBook implements Node {
+  id: ID!
+  name: String!
+  author: String
+  published_year: Int
+  genre: Int
+  imageId: String
+  sharingType: Int
+  user: User!
 }
 
 """A connection to a list of items."""
-type CommentConnection {
+type OwnBookConnection {
   """Information to aid in pagination."""
   pageInfo: PageInfo!
 
   """A list of edges."""
-  edges: [CommentEdge]!
-  aggregate: AggregateComment!
+  edges: [OwnBookEdge]!
+  aggregate: AggregateOwnBook!
 }
 
-input CommentCreateInput {
+input OwnBookCreateInput {
   id: ID
-  text: String!
-  author: UserCreateOneWithoutCommentsInput!
-  post: PostCreateOneWithoutCommentsInput!
+  name: String!
+  author: String
+  published_year: Int
+  genre: Int
+  imageId: String
+  sharingType: Int
+  user: UserCreateOneWithoutOwnBooksInput!
 }
 
-input CommentCreateManyWithoutAuthorInput {
-  create: [CommentCreateWithoutAuthorInput!]
-  connect: [CommentWhereUniqueInput!]
+input OwnBookCreateManyWithoutUserInput {
+  create: [OwnBookCreateWithoutUserInput!]
+  connect: [OwnBookWhereUniqueInput!]
 }
 
-input CommentCreateManyWithoutPostInput {
-  create: [CommentCreateWithoutPostInput!]
-  connect: [CommentWhereUniqueInput!]
-}
-
-input CommentCreateWithoutAuthorInput {
+input OwnBookCreateWithoutUserInput {
   id: ID
-  text: String!
-  post: PostCreateOneWithoutCommentsInput!
-}
-
-input CommentCreateWithoutPostInput {
-  id: ID
-  text: String!
-  author: UserCreateOneWithoutCommentsInput!
+  name: String!
+  author: String
+  published_year: Int
+  genre: Int
+  imageId: String
+  sharingType: Int
 }
 
 """An edge in a connection."""
-type CommentEdge {
+type OwnBookEdge {
   """The item at the end of the edge."""
-  node: Comment!
+  node: OwnBook!
 
   """A cursor for use in pagination."""
   cursor: String!
 }
 
-enum CommentOrderByInput {
+enum OwnBookOrderByInput {
   id_ASC
   id_DESC
-  text_ASC
-  text_DESC
+  name_ASC
+  name_DESC
+  author_ASC
+  author_DESC
+  published_year_ASC
+  published_year_DESC
+  genre_ASC
+  genre_DESC
+  imageId_ASC
+  imageId_DESC
+  sharingType_ASC
+  sharingType_DESC
 }
 
-type CommentPreviousValues {
+type OwnBookPreviousValues {
   id: ID!
-  text: String!
+  name: String!
+  author: String
+  published_year: Int
+  genre: Int
+  imageId: String
+  sharingType: Int
 }
 
-input CommentScalarWhereInput {
+input OwnBookScalarWhereInput {
   """Logical AND on all given filters."""
-  AND: [CommentScalarWhereInput!]
+  AND: [OwnBookScalarWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [CommentScalarWhereInput!]
+  OR: [OwnBookScalarWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [CommentScalarWhereInput!]
+  NOT: [OwnBookScalarWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -134,64 +193,210 @@ input CommentScalarWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  text: String
+  name: String
 
   """All values that are not equal to given value."""
-  text_not: String
+  name_not: String
 
   """All values that are contained in given list."""
-  text_in: [String!]
+  name_in: [String!]
 
   """All values that are not contained in given list."""
-  text_not_in: [String!]
+  name_not_in: [String!]
 
   """All values less than the given value."""
-  text_lt: String
+  name_lt: String
 
   """All values less than or equal the given value."""
-  text_lte: String
+  name_lte: String
 
   """All values greater than the given value."""
-  text_gt: String
+  name_gt: String
 
   """All values greater than or equal the given value."""
-  text_gte: String
+  name_gte: String
 
   """All values containing the given string."""
-  text_contains: String
+  name_contains: String
 
   """All values not containing the given string."""
-  text_not_contains: String
+  name_not_contains: String
 
   """All values starting with the given string."""
-  text_starts_with: String
+  name_starts_with: String
 
   """All values not starting with the given string."""
-  text_not_starts_with: String
+  name_not_starts_with: String
 
   """All values ending with the given string."""
-  text_ends_with: String
+  name_ends_with: String
 
   """All values not ending with the given string."""
-  text_not_ends_with: String
+  name_not_ends_with: String
+  author: String
+
+  """All values that are not equal to given value."""
+  author_not: String
+
+  """All values that are contained in given list."""
+  author_in: [String!]
+
+  """All values that are not contained in given list."""
+  author_not_in: [String!]
+
+  """All values less than the given value."""
+  author_lt: String
+
+  """All values less than or equal the given value."""
+  author_lte: String
+
+  """All values greater than the given value."""
+  author_gt: String
+
+  """All values greater than or equal the given value."""
+  author_gte: String
+
+  """All values containing the given string."""
+  author_contains: String
+
+  """All values not containing the given string."""
+  author_not_contains: String
+
+  """All values starting with the given string."""
+  author_starts_with: String
+
+  """All values not starting with the given string."""
+  author_not_starts_with: String
+
+  """All values ending with the given string."""
+  author_ends_with: String
+
+  """All values not ending with the given string."""
+  author_not_ends_with: String
+  published_year: Int
+
+  """All values that are not equal to given value."""
+  published_year_not: Int
+
+  """All values that are contained in given list."""
+  published_year_in: [Int!]
+
+  """All values that are not contained in given list."""
+  published_year_not_in: [Int!]
+
+  """All values less than the given value."""
+  published_year_lt: Int
+
+  """All values less than or equal the given value."""
+  published_year_lte: Int
+
+  """All values greater than the given value."""
+  published_year_gt: Int
+
+  """All values greater than or equal the given value."""
+  published_year_gte: Int
+  genre: Int
+
+  """All values that are not equal to given value."""
+  genre_not: Int
+
+  """All values that are contained in given list."""
+  genre_in: [Int!]
+
+  """All values that are not contained in given list."""
+  genre_not_in: [Int!]
+
+  """All values less than the given value."""
+  genre_lt: Int
+
+  """All values less than or equal the given value."""
+  genre_lte: Int
+
+  """All values greater than the given value."""
+  genre_gt: Int
+
+  """All values greater than or equal the given value."""
+  genre_gte: Int
+  imageId: String
+
+  """All values that are not equal to given value."""
+  imageId_not: String
+
+  """All values that are contained in given list."""
+  imageId_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageId_not_in: [String!]
+
+  """All values less than the given value."""
+  imageId_lt: String
+
+  """All values less than or equal the given value."""
+  imageId_lte: String
+
+  """All values greater than the given value."""
+  imageId_gt: String
+
+  """All values greater than or equal the given value."""
+  imageId_gte: String
+
+  """All values containing the given string."""
+  imageId_contains: String
+
+  """All values not containing the given string."""
+  imageId_not_contains: String
+
+  """All values starting with the given string."""
+  imageId_starts_with: String
+
+  """All values not starting with the given string."""
+  imageId_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageId_ends_with: String
+
+  """All values not ending with the given string."""
+  imageId_not_ends_with: String
+  sharingType: Int
+
+  """All values that are not equal to given value."""
+  sharingType_not: Int
+
+  """All values that are contained in given list."""
+  sharingType_in: [Int!]
+
+  """All values that are not contained in given list."""
+  sharingType_not_in: [Int!]
+
+  """All values less than the given value."""
+  sharingType_lt: Int
+
+  """All values less than or equal the given value."""
+  sharingType_lte: Int
+
+  """All values greater than the given value."""
+  sharingType_gt: Int
+
+  """All values greater than or equal the given value."""
+  sharingType_gte: Int
 }
 
-type CommentSubscriptionPayload {
+type OwnBookSubscriptionPayload {
   mutation: MutationType!
-  node: Comment
+  node: OwnBook
   updatedFields: [String!]
-  previousValues: CommentPreviousValues
+  previousValues: OwnBookPreviousValues
 }
 
-input CommentSubscriptionWhereInput {
+input OwnBookSubscriptionWhereInput {
   """Logical AND on all given filters."""
-  AND: [CommentSubscriptionWhereInput!]
+  AND: [OwnBookSubscriptionWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [CommentSubscriptionWhereInput!]
+  OR: [OwnBookSubscriptionWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [CommentSubscriptionWhereInput!]
+  NOT: [OwnBookSubscriptionWhereInput!]
 
   """The subscription event gets dispatched when it's listed in mutation_in"""
   mutation_in: [MutationType!]
@@ -210,93 +415,83 @@ input CommentSubscriptionWhereInput {
   The subscription event gets only dispatched when some of the field names included in this list have been updated
   """
   updatedFields_contains_some: [String!]
-  node: CommentWhereInput
+  node: OwnBookWhereInput
 }
 
-input CommentUpdateInput {
-  text: String
-  author: UserUpdateOneRequiredWithoutCommentsInput
-  post: PostUpdateOneRequiredWithoutCommentsInput
+input OwnBookUpdateInput {
+  name: String
+  author: String
+  published_year: Int
+  genre: Int
+  imageId: String
+  sharingType: Int
+  user: UserUpdateOneRequiredWithoutOwnBooksInput
 }
 
-input CommentUpdateManyDataInput {
-  text: String
+input OwnBookUpdateManyDataInput {
+  name: String
+  author: String
+  published_year: Int
+  genre: Int
+  imageId: String
+  sharingType: Int
 }
 
-input CommentUpdateManyMutationInput {
-  text: String
+input OwnBookUpdateManyMutationInput {
+  name: String
+  author: String
+  published_year: Int
+  genre: Int
+  imageId: String
+  sharingType: Int
 }
 
-input CommentUpdateManyWithoutAuthorInput {
-  create: [CommentCreateWithoutAuthorInput!]
-  connect: [CommentWhereUniqueInput!]
-  set: [CommentWhereUniqueInput!]
-  disconnect: [CommentWhereUniqueInput!]
-  delete: [CommentWhereUniqueInput!]
-  update: [CommentUpdateWithWhereUniqueWithoutAuthorInput!]
-  updateMany: [CommentUpdateManyWithWhereNestedInput!]
-  deleteMany: [CommentScalarWhereInput!]
-  upsert: [CommentUpsertWithWhereUniqueWithoutAuthorInput!]
+input OwnBookUpdateManyWithoutUserInput {
+  create: [OwnBookCreateWithoutUserInput!]
+  connect: [OwnBookWhereUniqueInput!]
+  set: [OwnBookWhereUniqueInput!]
+  disconnect: [OwnBookWhereUniqueInput!]
+  delete: [OwnBookWhereUniqueInput!]
+  update: [OwnBookUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [OwnBookUpdateManyWithWhereNestedInput!]
+  deleteMany: [OwnBookScalarWhereInput!]
+  upsert: [OwnBookUpsertWithWhereUniqueWithoutUserInput!]
 }
 
-input CommentUpdateManyWithoutPostInput {
-  create: [CommentCreateWithoutPostInput!]
-  connect: [CommentWhereUniqueInput!]
-  set: [CommentWhereUniqueInput!]
-  disconnect: [CommentWhereUniqueInput!]
-  delete: [CommentWhereUniqueInput!]
-  update: [CommentUpdateWithWhereUniqueWithoutPostInput!]
-  updateMany: [CommentUpdateManyWithWhereNestedInput!]
-  deleteMany: [CommentScalarWhereInput!]
-  upsert: [CommentUpsertWithWhereUniqueWithoutPostInput!]
+input OwnBookUpdateManyWithWhereNestedInput {
+  where: OwnBookScalarWhereInput!
+  data: OwnBookUpdateManyDataInput!
 }
 
-input CommentUpdateManyWithWhereNestedInput {
-  where: CommentScalarWhereInput!
-  data: CommentUpdateManyDataInput!
+input OwnBookUpdateWithoutUserDataInput {
+  name: String
+  author: String
+  published_year: Int
+  genre: Int
+  imageId: String
+  sharingType: Int
 }
 
-input CommentUpdateWithoutAuthorDataInput {
-  text: String
-  post: PostUpdateOneRequiredWithoutCommentsInput
+input OwnBookUpdateWithWhereUniqueWithoutUserInput {
+  where: OwnBookWhereUniqueInput!
+  data: OwnBookUpdateWithoutUserDataInput!
 }
 
-input CommentUpdateWithoutPostDataInput {
-  text: String
-  author: UserUpdateOneRequiredWithoutCommentsInput
+input OwnBookUpsertWithWhereUniqueWithoutUserInput {
+  where: OwnBookWhereUniqueInput!
+  update: OwnBookUpdateWithoutUserDataInput!
+  create: OwnBookCreateWithoutUserInput!
 }
 
-input CommentUpdateWithWhereUniqueWithoutAuthorInput {
-  where: CommentWhereUniqueInput!
-  data: CommentUpdateWithoutAuthorDataInput!
-}
-
-input CommentUpdateWithWhereUniqueWithoutPostInput {
-  where: CommentWhereUniqueInput!
-  data: CommentUpdateWithoutPostDataInput!
-}
-
-input CommentUpsertWithWhereUniqueWithoutAuthorInput {
-  where: CommentWhereUniqueInput!
-  update: CommentUpdateWithoutAuthorDataInput!
-  create: CommentCreateWithoutAuthorInput!
-}
-
-input CommentUpsertWithWhereUniqueWithoutPostInput {
-  where: CommentWhereUniqueInput!
-  update: CommentUpdateWithoutPostDataInput!
-  create: CommentCreateWithoutPostInput!
-}
-
-input CommentWhereInput {
+input OwnBookWhereInput {
   """Logical AND on all given filters."""
-  AND: [CommentWhereInput!]
+  AND: [OwnBookWhereInput!]
 
   """Logical OR on all given filters."""
-  OR: [CommentWhereInput!]
+  OR: [OwnBookWhereInput!]
 
   """Logical NOT on all given filters combined by AND."""
-  NOT: [CommentWhereInput!]
+  NOT: [OwnBookWhereInput!]
   id: ID
 
   """All values that are not equal to given value."""
@@ -337,95 +532,197 @@ input CommentWhereInput {
 
   """All values not ending with the given string."""
   id_not_ends_with: ID
-  text: String
+  name: String
 
   """All values that are not equal to given value."""
-  text_not: String
+  name_not: String
 
   """All values that are contained in given list."""
-  text_in: [String!]
+  name_in: [String!]
 
   """All values that are not contained in given list."""
-  text_not_in: [String!]
+  name_not_in: [String!]
 
   """All values less than the given value."""
-  text_lt: String
+  name_lt: String
 
   """All values less than or equal the given value."""
-  text_lte: String
+  name_lte: String
 
   """All values greater than the given value."""
-  text_gt: String
+  name_gt: String
 
   """All values greater than or equal the given value."""
-  text_gte: String
+  name_gte: String
 
   """All values containing the given string."""
-  text_contains: String
+  name_contains: String
 
   """All values not containing the given string."""
-  text_not_contains: String
+  name_not_contains: String
 
   """All values starting with the given string."""
-  text_starts_with: String
+  name_starts_with: String
 
   """All values not starting with the given string."""
-  text_not_starts_with: String
+  name_not_starts_with: String
 
   """All values ending with the given string."""
-  text_ends_with: String
+  name_ends_with: String
 
   """All values not ending with the given string."""
-  text_not_ends_with: String
-  author: UserWhereInput
-  post: PostWhereInput
+  name_not_ends_with: String
+  author: String
+
+  """All values that are not equal to given value."""
+  author_not: String
+
+  """All values that are contained in given list."""
+  author_in: [String!]
+
+  """All values that are not contained in given list."""
+  author_not_in: [String!]
+
+  """All values less than the given value."""
+  author_lt: String
+
+  """All values less than or equal the given value."""
+  author_lte: String
+
+  """All values greater than the given value."""
+  author_gt: String
+
+  """All values greater than or equal the given value."""
+  author_gte: String
+
+  """All values containing the given string."""
+  author_contains: String
+
+  """All values not containing the given string."""
+  author_not_contains: String
+
+  """All values starting with the given string."""
+  author_starts_with: String
+
+  """All values not starting with the given string."""
+  author_not_starts_with: String
+
+  """All values ending with the given string."""
+  author_ends_with: String
+
+  """All values not ending with the given string."""
+  author_not_ends_with: String
+  published_year: Int
+
+  """All values that are not equal to given value."""
+  published_year_not: Int
+
+  """All values that are contained in given list."""
+  published_year_in: [Int!]
+
+  """All values that are not contained in given list."""
+  published_year_not_in: [Int!]
+
+  """All values less than the given value."""
+  published_year_lt: Int
+
+  """All values less than or equal the given value."""
+  published_year_lte: Int
+
+  """All values greater than the given value."""
+  published_year_gt: Int
+
+  """All values greater than or equal the given value."""
+  published_year_gte: Int
+  genre: Int
+
+  """All values that are not equal to given value."""
+  genre_not: Int
+
+  """All values that are contained in given list."""
+  genre_in: [Int!]
+
+  """All values that are not contained in given list."""
+  genre_not_in: [Int!]
+
+  """All values less than the given value."""
+  genre_lt: Int
+
+  """All values less than or equal the given value."""
+  genre_lte: Int
+
+  """All values greater than the given value."""
+  genre_gt: Int
+
+  """All values greater than or equal the given value."""
+  genre_gte: Int
+  imageId: String
+
+  """All values that are not equal to given value."""
+  imageId_not: String
+
+  """All values that are contained in given list."""
+  imageId_in: [String!]
+
+  """All values that are not contained in given list."""
+  imageId_not_in: [String!]
+
+  """All values less than the given value."""
+  imageId_lt: String
+
+  """All values less than or equal the given value."""
+  imageId_lte: String
+
+  """All values greater than the given value."""
+  imageId_gt: String
+
+  """All values greater than or equal the given value."""
+  imageId_gte: String
+
+  """All values containing the given string."""
+  imageId_contains: String
+
+  """All values not containing the given string."""
+  imageId_not_contains: String
+
+  """All values starting with the given string."""
+  imageId_starts_with: String
+
+  """All values not starting with the given string."""
+  imageId_not_starts_with: String
+
+  """All values ending with the given string."""
+  imageId_ends_with: String
+
+  """All values not ending with the given string."""
+  imageId_not_ends_with: String
+  sharingType: Int
+
+  """All values that are not equal to given value."""
+  sharingType_not: Int
+
+  """All values that are contained in given list."""
+  sharingType_in: [Int!]
+
+  """All values that are not contained in given list."""
+  sharingType_not_in: [Int!]
+
+  """All values less than the given value."""
+  sharingType_lt: Int
+
+  """All values less than or equal the given value."""
+  sharingType_lte: Int
+
+  """All values greater than the given value."""
+  sharingType_gt: Int
+
+  """All values greater than or equal the given value."""
+  sharingType_gte: Int
+  user: UserWhereInput
 }
 
-input CommentWhereUniqueInput {
+input OwnBookWhereUniqueInput {
   id: ID
-}
-
-"""Raw JSON value"""
-scalar Json
-
-"""
-The `Long` scalar type represents non-fractional signed whole numeric values.
-Long can represent values between -(2^63) and 2^63 - 1.
-"""
-scalar Long
-
-type Mutation {
-  createUser(data: UserCreateInput!): User!
-  createPost(data: PostCreateInput!): Post!
-  createComment(data: CommentCreateInput!): Comment!
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
-  updatePost(data: PostUpdateInput!, where: PostWhereUniqueInput!): Post
-  updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
-  deleteUser(where: UserWhereUniqueInput!): User
-  deletePost(where: PostWhereUniqueInput!): Post
-  deleteComment(where: CommentWhereUniqueInput!): Comment
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
-  upsertPost(where: PostWhereUniqueInput!, create: PostCreateInput!, update: PostUpdateInput!): Post!
-  upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
-  updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
-  updateManyPosts(data: PostUpdateManyMutationInput!, where: PostWhereInput): BatchPayload!
-  updateManyComments(data: CommentUpdateManyMutationInput!, where: CommentWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
-  deleteManyPosts(where: PostWhereInput): BatchPayload!
-  deleteManyComments(where: CommentWhereInput): BatchPayload!
-  executeRaw(database: PrismaDatabase, query: String!): Json!
-}
-
-enum MutationType {
-  CREATED
-  UPDATED
-  DELETED
-}
-
-"""An object with an ID"""
-interface Node {
-  """The id of the object."""
-  id: ID!
 }
 
 """Information about pagination in a connection."""
@@ -443,490 +740,20 @@ type PageInfo {
   endCursor: String
 }
 
-type Post implements Node {
-  id: ID!
-  title: String!
-  body: String!
-  published: Boolean!
-  author: User!
-  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
-}
-
-"""A connection to a list of items."""
-type PostConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [PostEdge]!
-  aggregate: AggregatePost!
-}
-
-input PostCreateInput {
-  id: ID
-  title: String!
-  body: String!
-  published: Boolean!
-  author: UserCreateOneWithoutPostsInput!
-  comments: CommentCreateManyWithoutPostInput
-}
-
-input PostCreateManyWithoutAuthorInput {
-  create: [PostCreateWithoutAuthorInput!]
-  connect: [PostWhereUniqueInput!]
-}
-
-input PostCreateOneWithoutCommentsInput {
-  create: PostCreateWithoutCommentsInput
-  connect: PostWhereUniqueInput
-}
-
-input PostCreateWithoutAuthorInput {
-  id: ID
-  title: String!
-  body: String!
-  published: Boolean!
-  comments: CommentCreateManyWithoutPostInput
-}
-
-input PostCreateWithoutCommentsInput {
-  id: ID
-  title: String!
-  body: String!
-  published: Boolean!
-  author: UserCreateOneWithoutPostsInput!
-}
-
-"""An edge in a connection."""
-type PostEdge {
-  """The item at the end of the edge."""
-  node: Post!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-enum PostOrderByInput {
-  id_ASC
-  id_DESC
-  title_ASC
-  title_DESC
-  body_ASC
-  body_DESC
-  published_ASC
-  published_DESC
-}
-
-type PostPreviousValues {
-  id: ID!
-  title: String!
-  body: String!
-  published: Boolean!
-}
-
-input PostScalarWhereInput {
-  """Logical AND on all given filters."""
-  AND: [PostScalarWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [PostScalarWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [PostScalarWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  title: String
-
-  """All values that are not equal to given value."""
-  title_not: String
-
-  """All values that are contained in given list."""
-  title_in: [String!]
-
-  """All values that are not contained in given list."""
-  title_not_in: [String!]
-
-  """All values less than the given value."""
-  title_lt: String
-
-  """All values less than or equal the given value."""
-  title_lte: String
-
-  """All values greater than the given value."""
-  title_gt: String
-
-  """All values greater than or equal the given value."""
-  title_gte: String
-
-  """All values containing the given string."""
-  title_contains: String
-
-  """All values not containing the given string."""
-  title_not_contains: String
-
-  """All values starting with the given string."""
-  title_starts_with: String
-
-  """All values not starting with the given string."""
-  title_not_starts_with: String
-
-  """All values ending with the given string."""
-  title_ends_with: String
-
-  """All values not ending with the given string."""
-  title_not_ends_with: String
-  body: String
-
-  """All values that are not equal to given value."""
-  body_not: String
-
-  """All values that are contained in given list."""
-  body_in: [String!]
-
-  """All values that are not contained in given list."""
-  body_not_in: [String!]
-
-  """All values less than the given value."""
-  body_lt: String
-
-  """All values less than or equal the given value."""
-  body_lte: String
-
-  """All values greater than the given value."""
-  body_gt: String
-
-  """All values greater than or equal the given value."""
-  body_gte: String
-
-  """All values containing the given string."""
-  body_contains: String
-
-  """All values not containing the given string."""
-  body_not_contains: String
-
-  """All values starting with the given string."""
-  body_starts_with: String
-
-  """All values not starting with the given string."""
-  body_not_starts_with: String
-
-  """All values ending with the given string."""
-  body_ends_with: String
-
-  """All values not ending with the given string."""
-  body_not_ends_with: String
-  published: Boolean
-
-  """All values that are not equal to given value."""
-  published_not: Boolean
-}
-
-type PostSubscriptionPayload {
-  mutation: MutationType!
-  node: Post
-  updatedFields: [String!]
-  previousValues: PostPreviousValues
-}
-
-input PostSubscriptionWhereInput {
-  """Logical AND on all given filters."""
-  AND: [PostSubscriptionWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [PostSubscriptionWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [PostSubscriptionWhereInput!]
-
-  """The subscription event gets dispatched when it's listed in mutation_in"""
-  mutation_in: [MutationType!]
-
-  """
-  The subscription event gets only dispatched when one of the updated fields names is included in this list
-  """
-  updatedFields_contains: String
-
-  """
-  The subscription event gets only dispatched when all of the field names included in this list have been updated
-  """
-  updatedFields_contains_every: [String!]
-
-  """
-  The subscription event gets only dispatched when some of the field names included in this list have been updated
-  """
-  updatedFields_contains_some: [String!]
-  node: PostWhereInput
-}
-
-input PostUpdateInput {
-  title: String
-  body: String
-  published: Boolean
-  author: UserUpdateOneRequiredWithoutPostsInput
-  comments: CommentUpdateManyWithoutPostInput
-}
-
-input PostUpdateManyDataInput {
-  title: String
-  body: String
-  published: Boolean
-}
-
-input PostUpdateManyMutationInput {
-  title: String
-  body: String
-  published: Boolean
-}
-
-input PostUpdateManyWithoutAuthorInput {
-  create: [PostCreateWithoutAuthorInput!]
-  connect: [PostWhereUniqueInput!]
-  set: [PostWhereUniqueInput!]
-  disconnect: [PostWhereUniqueInput!]
-  delete: [PostWhereUniqueInput!]
-  update: [PostUpdateWithWhereUniqueWithoutAuthorInput!]
-  updateMany: [PostUpdateManyWithWhereNestedInput!]
-  deleteMany: [PostScalarWhereInput!]
-  upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
-}
-
-input PostUpdateManyWithWhereNestedInput {
-  where: PostScalarWhereInput!
-  data: PostUpdateManyDataInput!
-}
-
-input PostUpdateOneRequiredWithoutCommentsInput {
-  create: PostCreateWithoutCommentsInput
-  connect: PostWhereUniqueInput
-  update: PostUpdateWithoutCommentsDataInput
-  upsert: PostUpsertWithoutCommentsInput
-}
-
-input PostUpdateWithoutAuthorDataInput {
-  title: String
-  body: String
-  published: Boolean
-  comments: CommentUpdateManyWithoutPostInput
-}
-
-input PostUpdateWithoutCommentsDataInput {
-  title: String
-  body: String
-  published: Boolean
-  author: UserUpdateOneRequiredWithoutPostsInput
-}
-
-input PostUpdateWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput!
-  data: PostUpdateWithoutAuthorDataInput!
-}
-
-input PostUpsertWithoutCommentsInput {
-  update: PostUpdateWithoutCommentsDataInput!
-  create: PostCreateWithoutCommentsInput!
-}
-
-input PostUpsertWithWhereUniqueWithoutAuthorInput {
-  where: PostWhereUniqueInput!
-  update: PostUpdateWithoutAuthorDataInput!
-  create: PostCreateWithoutAuthorInput!
-}
-
-input PostWhereInput {
-  """Logical AND on all given filters."""
-  AND: [PostWhereInput!]
-
-  """Logical OR on all given filters."""
-  OR: [PostWhereInput!]
-
-  """Logical NOT on all given filters combined by AND."""
-  NOT: [PostWhereInput!]
-  id: ID
-
-  """All values that are not equal to given value."""
-  id_not: ID
-
-  """All values that are contained in given list."""
-  id_in: [ID!]
-
-  """All values that are not contained in given list."""
-  id_not_in: [ID!]
-
-  """All values less than the given value."""
-  id_lt: ID
-
-  """All values less than or equal the given value."""
-  id_lte: ID
-
-  """All values greater than the given value."""
-  id_gt: ID
-
-  """All values greater than or equal the given value."""
-  id_gte: ID
-
-  """All values containing the given string."""
-  id_contains: ID
-
-  """All values not containing the given string."""
-  id_not_contains: ID
-
-  """All values starting with the given string."""
-  id_starts_with: ID
-
-  """All values not starting with the given string."""
-  id_not_starts_with: ID
-
-  """All values ending with the given string."""
-  id_ends_with: ID
-
-  """All values not ending with the given string."""
-  id_not_ends_with: ID
-  title: String
-
-  """All values that are not equal to given value."""
-  title_not: String
-
-  """All values that are contained in given list."""
-  title_in: [String!]
-
-  """All values that are not contained in given list."""
-  title_not_in: [String!]
-
-  """All values less than the given value."""
-  title_lt: String
-
-  """All values less than or equal the given value."""
-  title_lte: String
-
-  """All values greater than the given value."""
-  title_gt: String
-
-  """All values greater than or equal the given value."""
-  title_gte: String
-
-  """All values containing the given string."""
-  title_contains: String
-
-  """All values not containing the given string."""
-  title_not_contains: String
-
-  """All values starting with the given string."""
-  title_starts_with: String
-
-  """All values not starting with the given string."""
-  title_not_starts_with: String
-
-  """All values ending with the given string."""
-  title_ends_with: String
-
-  """All values not ending with the given string."""
-  title_not_ends_with: String
-  body: String
-
-  """All values that are not equal to given value."""
-  body_not: String
-
-  """All values that are contained in given list."""
-  body_in: [String!]
-
-  """All values that are not contained in given list."""
-  body_not_in: [String!]
-
-  """All values less than the given value."""
-  body_lt: String
-
-  """All values less than or equal the given value."""
-  body_lte: String
-
-  """All values greater than the given value."""
-  body_gt: String
-
-  """All values greater than or equal the given value."""
-  body_gte: String
-
-  """All values containing the given string."""
-  body_contains: String
-
-  """All values not containing the given string."""
-  body_not_contains: String
-
-  """All values starting with the given string."""
-  body_starts_with: String
-
-  """All values not starting with the given string."""
-  body_not_starts_with: String
-
-  """All values ending with the given string."""
-  body_ends_with: String
-
-  """All values not ending with the given string."""
-  body_not_ends_with: String
-  published: Boolean
-
-  """All values that are not equal to given value."""
-  published_not: Boolean
-  author: UserWhereInput
-  comments_every: CommentWhereInput
-  comments_some: CommentWhereInput
-  comments_none: CommentWhereInput
-}
-
-input PostWhereUniqueInput {
-  id: ID
-}
-
 enum PrismaDatabase {
   default
 }
 
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post]!
-  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
+  ownBooks(where: OwnBookWhereInput, orderBy: OwnBookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OwnBook]!
+  wishBooks(where: WishBookWhereInput, orderBy: WishBookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WishBook]!
   user(where: UserWhereUniqueInput!): User
-  post(where: PostWhereUniqueInput!): Post
-  comment(where: CommentWhereUniqueInput!): Comment
+  ownBook(where: OwnBookWhereUniqueInput!): OwnBook
+  wishBook(where: WishBookWhereUniqueInput!): WishBook
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
-  postsConnection(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PostConnection!
-  commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
+  ownBooksConnection(where: OwnBookWhereInput, orderBy: OwnBookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): OwnBookConnection!
+  wishBooksConnection(where: WishBookWhereInput, orderBy: WishBookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): WishBookConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -937,8 +764,8 @@ type Query {
 
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
-  post(where: PostSubscriptionWhereInput): PostSubscriptionPayload
-  comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
+  ownBook(where: OwnBookSubscriptionWhereInput): OwnBookSubscriptionPayload
+  wishBook(where: WishBookSubscriptionWhereInput): WishBookSubscriptionPayload
 }
 
 type User implements Node {
@@ -946,8 +773,9 @@ type User implements Node {
   name: String!
   email: String!
   password: String!
-  posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
-  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  phoneNumber: String
+  ownBooks(where: OwnBookWhereInput, orderBy: OwnBookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OwnBook!]
+  wishBooks(where: WishBookWhereInput, orderBy: WishBookOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [WishBook!]
 }
 
 """A connection to a list of items."""
@@ -965,34 +793,37 @@ input UserCreateInput {
   name: String!
   email: String!
   password: String!
-  posts: PostCreateManyWithoutAuthorInput
-  comments: CommentCreateManyWithoutAuthorInput
+  phoneNumber: String
+  ownBooks: OwnBookCreateManyWithoutUserInput
+  wishBooks: WishBookCreateManyWithoutUserInput
 }
 
-input UserCreateOneWithoutCommentsInput {
-  create: UserCreateWithoutCommentsInput
+input UserCreateOneWithoutOwnBooksInput {
+  create: UserCreateWithoutOwnBooksInput
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOneWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
+input UserCreateOneWithoutWishBooksInput {
+  create: UserCreateWithoutWishBooksInput
   connect: UserWhereUniqueInput
 }
 
-input UserCreateWithoutCommentsInput {
+input UserCreateWithoutOwnBooksInput {
   id: ID
   name: String!
   email: String!
   password: String!
-  posts: PostCreateManyWithoutAuthorInput
+  phoneNumber: String
+  wishBooks: WishBookCreateManyWithoutUserInput
 }
 
-input UserCreateWithoutPostsInput {
+input UserCreateWithoutWishBooksInput {
   id: ID
   name: String!
   email: String!
   password: String!
-  comments: CommentCreateManyWithoutAuthorInput
+  phoneNumber: String
+  ownBooks: OwnBookCreateManyWithoutUserInput
 }
 
 """An edge in a connection."""
@@ -1013,6 +844,8 @@ enum UserOrderByInput {
   email_DESC
   password_ASC
   password_DESC
+  phoneNumber_ASC
+  phoneNumber_DESC
 }
 
 type UserPreviousValues {
@@ -1020,6 +853,7 @@ type UserPreviousValues {
   name: String!
   email: String!
   password: String!
+  phoneNumber: String
 }
 
 type UserSubscriptionPayload {
@@ -1063,52 +897,56 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  posts: PostUpdateManyWithoutAuthorInput
-  comments: CommentUpdateManyWithoutAuthorInput
+  phoneNumber: String
+  ownBooks: OwnBookUpdateManyWithoutUserInput
+  wishBooks: WishBookUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyMutationInput {
   name: String
   email: String
   password: String
+  phoneNumber: String
 }
 
-input UserUpdateOneRequiredWithoutCommentsInput {
-  create: UserCreateWithoutCommentsInput
+input UserUpdateOneRequiredWithoutOwnBooksInput {
+  create: UserCreateWithoutOwnBooksInput
   connect: UserWhereUniqueInput
-  update: UserUpdateWithoutCommentsDataInput
-  upsert: UserUpsertWithoutCommentsInput
+  update: UserUpdateWithoutOwnBooksDataInput
+  upsert: UserUpsertWithoutOwnBooksInput
 }
 
-input UserUpdateOneRequiredWithoutPostsInput {
-  create: UserCreateWithoutPostsInput
+input UserUpdateOneRequiredWithoutWishBooksInput {
+  create: UserCreateWithoutWishBooksInput
   connect: UserWhereUniqueInput
-  update: UserUpdateWithoutPostsDataInput
-  upsert: UserUpsertWithoutPostsInput
+  update: UserUpdateWithoutWishBooksDataInput
+  upsert: UserUpsertWithoutWishBooksInput
 }
 
-input UserUpdateWithoutCommentsDataInput {
+input UserUpdateWithoutOwnBooksDataInput {
   name: String
   email: String
   password: String
-  posts: PostUpdateManyWithoutAuthorInput
+  phoneNumber: String
+  wishBooks: WishBookUpdateManyWithoutUserInput
 }
 
-input UserUpdateWithoutPostsDataInput {
+input UserUpdateWithoutWishBooksDataInput {
   name: String
   email: String
   password: String
-  comments: CommentUpdateManyWithoutAuthorInput
+  phoneNumber: String
+  ownBooks: OwnBookUpdateManyWithoutUserInput
 }
 
-input UserUpsertWithoutCommentsInput {
-  update: UserUpdateWithoutCommentsDataInput!
-  create: UserCreateWithoutCommentsInput!
+input UserUpsertWithoutOwnBooksInput {
+  update: UserUpdateWithoutOwnBooksDataInput!
+  create: UserCreateWithoutOwnBooksInput!
 }
 
-input UserUpsertWithoutPostsInput {
-  update: UserUpdateWithoutPostsDataInput!
-  create: UserCreateWithoutPostsInput!
+input UserUpsertWithoutWishBooksInput {
+  update: UserUpdateWithoutWishBooksDataInput!
+  create: UserCreateWithoutWishBooksInput!
 }
 
 input UserWhereInput {
@@ -1280,15 +1118,521 @@ input UserWhereInput {
 
   """All values not ending with the given string."""
   password_not_ends_with: String
-  posts_every: PostWhereInput
-  posts_some: PostWhereInput
-  posts_none: PostWhereInput
-  comments_every: CommentWhereInput
-  comments_some: CommentWhereInput
-  comments_none: CommentWhereInput
+  phoneNumber: String
+
+  """All values that are not equal to given value."""
+  phoneNumber_not: String
+
+  """All values that are contained in given list."""
+  phoneNumber_in: [String!]
+
+  """All values that are not contained in given list."""
+  phoneNumber_not_in: [String!]
+
+  """All values less than the given value."""
+  phoneNumber_lt: String
+
+  """All values less than or equal the given value."""
+  phoneNumber_lte: String
+
+  """All values greater than the given value."""
+  phoneNumber_gt: String
+
+  """All values greater than or equal the given value."""
+  phoneNumber_gte: String
+
+  """All values containing the given string."""
+  phoneNumber_contains: String
+
+  """All values not containing the given string."""
+  phoneNumber_not_contains: String
+
+  """All values starting with the given string."""
+  phoneNumber_starts_with: String
+
+  """All values not starting with the given string."""
+  phoneNumber_not_starts_with: String
+
+  """All values ending with the given string."""
+  phoneNumber_ends_with: String
+
+  """All values not ending with the given string."""
+  phoneNumber_not_ends_with: String
+  ownBooks_every: OwnBookWhereInput
+  ownBooks_some: OwnBookWhereInput
+  ownBooks_none: OwnBookWhereInput
+  wishBooks_every: WishBookWhereInput
+  wishBooks_some: WishBookWhereInput
+  wishBooks_none: WishBookWhereInput
 }
 
 input UserWhereUniqueInput {
   id: ID
   email: String
+}
+
+type WishBook implements Node {
+  id: ID!
+  name: String!
+  author: String
+  genre: Int
+  user: User!
+}
+
+"""A connection to a list of items."""
+type WishBookConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [WishBookEdge]!
+  aggregate: AggregateWishBook!
+}
+
+input WishBookCreateInput {
+  id: ID
+  name: String!
+  author: String
+  genre: Int
+  user: UserCreateOneWithoutWishBooksInput!
+}
+
+input WishBookCreateManyWithoutUserInput {
+  create: [WishBookCreateWithoutUserInput!]
+  connect: [WishBookWhereUniqueInput!]
+}
+
+input WishBookCreateWithoutUserInput {
+  id: ID
+  name: String!
+  author: String
+  genre: Int
+}
+
+"""An edge in a connection."""
+type WishBookEdge {
+  """The item at the end of the edge."""
+  node: WishBook!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum WishBookOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  author_ASC
+  author_DESC
+  genre_ASC
+  genre_DESC
+}
+
+type WishBookPreviousValues {
+  id: ID!
+  name: String!
+  author: String
+  genre: Int
+}
+
+input WishBookScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WishBookScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WishBookScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WishBookScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  author: String
+
+  """All values that are not equal to given value."""
+  author_not: String
+
+  """All values that are contained in given list."""
+  author_in: [String!]
+
+  """All values that are not contained in given list."""
+  author_not_in: [String!]
+
+  """All values less than the given value."""
+  author_lt: String
+
+  """All values less than or equal the given value."""
+  author_lte: String
+
+  """All values greater than the given value."""
+  author_gt: String
+
+  """All values greater than or equal the given value."""
+  author_gte: String
+
+  """All values containing the given string."""
+  author_contains: String
+
+  """All values not containing the given string."""
+  author_not_contains: String
+
+  """All values starting with the given string."""
+  author_starts_with: String
+
+  """All values not starting with the given string."""
+  author_not_starts_with: String
+
+  """All values ending with the given string."""
+  author_ends_with: String
+
+  """All values not ending with the given string."""
+  author_not_ends_with: String
+  genre: Int
+
+  """All values that are not equal to given value."""
+  genre_not: Int
+
+  """All values that are contained in given list."""
+  genre_in: [Int!]
+
+  """All values that are not contained in given list."""
+  genre_not_in: [Int!]
+
+  """All values less than the given value."""
+  genre_lt: Int
+
+  """All values less than or equal the given value."""
+  genre_lte: Int
+
+  """All values greater than the given value."""
+  genre_gt: Int
+
+  """All values greater than or equal the given value."""
+  genre_gte: Int
+}
+
+type WishBookSubscriptionPayload {
+  mutation: MutationType!
+  node: WishBook
+  updatedFields: [String!]
+  previousValues: WishBookPreviousValues
+}
+
+input WishBookSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WishBookSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WishBookSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WishBookSubscriptionWhereInput!]
+
+  """The subscription event gets dispatched when it's listed in mutation_in"""
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: WishBookWhereInput
+}
+
+input WishBookUpdateInput {
+  name: String
+  author: String
+  genre: Int
+  user: UserUpdateOneRequiredWithoutWishBooksInput
+}
+
+input WishBookUpdateManyDataInput {
+  name: String
+  author: String
+  genre: Int
+}
+
+input WishBookUpdateManyMutationInput {
+  name: String
+  author: String
+  genre: Int
+}
+
+input WishBookUpdateManyWithoutUserInput {
+  create: [WishBookCreateWithoutUserInput!]
+  connect: [WishBookWhereUniqueInput!]
+  set: [WishBookWhereUniqueInput!]
+  disconnect: [WishBookWhereUniqueInput!]
+  delete: [WishBookWhereUniqueInput!]
+  update: [WishBookUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [WishBookUpdateManyWithWhereNestedInput!]
+  deleteMany: [WishBookScalarWhereInput!]
+  upsert: [WishBookUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input WishBookUpdateManyWithWhereNestedInput {
+  where: WishBookScalarWhereInput!
+  data: WishBookUpdateManyDataInput!
+}
+
+input WishBookUpdateWithoutUserDataInput {
+  name: String
+  author: String
+  genre: Int
+}
+
+input WishBookUpdateWithWhereUniqueWithoutUserInput {
+  where: WishBookWhereUniqueInput!
+  data: WishBookUpdateWithoutUserDataInput!
+}
+
+input WishBookUpsertWithWhereUniqueWithoutUserInput {
+  where: WishBookWhereUniqueInput!
+  update: WishBookUpdateWithoutUserDataInput!
+  create: WishBookCreateWithoutUserInput!
+}
+
+input WishBookWhereInput {
+  """Logical AND on all given filters."""
+  AND: [WishBookWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [WishBookWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [WishBookWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  author: String
+
+  """All values that are not equal to given value."""
+  author_not: String
+
+  """All values that are contained in given list."""
+  author_in: [String!]
+
+  """All values that are not contained in given list."""
+  author_not_in: [String!]
+
+  """All values less than the given value."""
+  author_lt: String
+
+  """All values less than or equal the given value."""
+  author_lte: String
+
+  """All values greater than the given value."""
+  author_gt: String
+
+  """All values greater than or equal the given value."""
+  author_gte: String
+
+  """All values containing the given string."""
+  author_contains: String
+
+  """All values not containing the given string."""
+  author_not_contains: String
+
+  """All values starting with the given string."""
+  author_starts_with: String
+
+  """All values not starting with the given string."""
+  author_not_starts_with: String
+
+  """All values ending with the given string."""
+  author_ends_with: String
+
+  """All values not ending with the given string."""
+  author_not_ends_with: String
+  genre: Int
+
+  """All values that are not equal to given value."""
+  genre_not: Int
+
+  """All values that are contained in given list."""
+  genre_in: [Int!]
+
+  """All values that are not contained in given list."""
+  genre_not_in: [Int!]
+
+  """All values less than the given value."""
+  genre_lt: Int
+
+  """All values less than or equal the given value."""
+  genre_lte: Int
+
+  """All values greater than the given value."""
+  genre_gt: Int
+
+  """All values greater than or equal the given value."""
+  genre_gte: Int
+  user: UserWhereInput
+}
+
+input WishBookWhereUniqueInput {
+  id: ID
 }

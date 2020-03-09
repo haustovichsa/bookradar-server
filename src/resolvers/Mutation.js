@@ -96,6 +96,55 @@ const mutation = {
             }
         }, info)
     },
+
+    async deleteOwnBook(parent, args, {
+        prisma,
+        request
+    }, info) {
+        const userId = getUserId(request);
+
+        const ownBookExists = await prisma.exists.OwnBook({
+            id: args.id,
+            user: {
+                id: userId
+            }
+        })
+
+        if (!ownBookExists) {
+            throw new Error('Enable to delete own book')
+        }
+
+        return prisma.mutation.deleteOwnBook({
+            where: {
+                id: args.id
+            }
+        }, info)
+    },
+
+    async updateOwnBook(parent, args, {
+        prisma,
+        request
+    }, info) {
+        const userId = getUserId(request)
+
+        const ownBookExists = await prisma.exists.OwnBook({
+            id: args.id,
+            user: {
+                id: userId
+            }
+        })
+
+        if (!ownBookExists) {
+            throw new Error('Unable to update own book')
+        }
+
+        return prisma.mutation.updateOwnBook({
+            where: {
+                id: args.id
+            },
+            data: args.data
+        })
+    }
 };
 
 export {

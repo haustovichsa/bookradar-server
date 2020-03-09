@@ -22,9 +22,22 @@ const userTwo = {
     jwt: undefined
 }
 
+const ownBookOne = {
+    input: {
+        name: 'book one',
+        author: 'book one author',
+        published_year: 1990,
+        genre: 1,
+        imageId: '15125-51512-25152521',
+        sharingType: 1,
+    },
+    ownBook: undefined
+}
+
 const seedDatabase = async () => {
     // delete test data
     await prisma.mutation.deleteManyUsers()
+    await prisma.mutation.deleteManyOwnBooks()
 
     // create user one
     userOne.user = await prisma.mutation.createUser({
@@ -44,9 +57,21 @@ const seedDatabase = async () => {
         userId: userTwo.user.id
     }, process.env.JWT_SECRET)
 
+
+    // create post one
+    ownBookOne.ownBook = await prisma.mutation.createOwnBook({
+        data: {
+            ...ownBookOne.input,
+            user: {
+                connect: {
+                    id: userOne.user.id
+                }
+            }
+        }
+    })
 }
 
 export {
     seedDatabase as
-    default, userOne
+    default, userOne, ownBookOne
 }
