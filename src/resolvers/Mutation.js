@@ -144,7 +144,76 @@ const mutation = {
             },
             data: args.data
         })
-    }
+    },
+
+    async createWishBook(parent, args, {
+        prisma,
+        request
+    }, info) {
+        const userId = getUserId(request)
+
+        return await prisma.mutation.createWishBook({
+            data: {
+                name: args.data.name,
+                author: args.data.author,
+                genre: args.data.genre,
+                user: {
+                    connect: {
+                        id: userId
+                    }
+                }
+            }
+        }, info)
+    },
+
+    async deleteWishBook(parent, args, {
+        prisma,
+        request
+    }, info) {
+        const userId = getUserId(request);
+
+        const wishBookExists = await prisma.exists.WishBook({
+            id: args.id,
+            user: {
+                id: userId
+            }
+        })
+
+        if (!wishBookExists) {
+            throw new Error('Enable to delete wish book')
+        }
+
+        return prisma.mutation.deleteWishBook({
+            where: {
+                id: args.id
+            }
+        }, info)
+    },
+
+    async updateWishBook(parent, args, {
+        prisma,
+        request
+    }, info) {
+        const userId = getUserId(request)
+
+        const wishBookExists = await prisma.exists.WishBook({
+            id: args.id,
+            user: {
+                id: userId
+            }
+        })
+
+        if (!wishBookExists) {
+            throw new Error('Unable to update wish book')
+        }
+
+        return prisma.mutation.updateWishBook({
+            where: {
+                id: args.id
+            },
+            data: args.data
+        })
+    },
 };
 
 export {

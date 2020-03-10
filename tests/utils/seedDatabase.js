@@ -58,7 +58,7 @@ const seedDatabase = async () => {
     }, process.env.JWT_SECRET)
 
 
-    // create post one
+    // create own book one
     ownBookOne.ownBook = await prisma.mutation.createOwnBook({
         data: {
             ...ownBookOne.input,

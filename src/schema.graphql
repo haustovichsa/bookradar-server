@@ -4,6 +4,7 @@ type Query {
     users(query: String, first: Int, skip: Int, after: String, orderBy: UserOrderByInput): [User!]!
     me: User!
     ownBooks: [OwnBook!]!
+    wishBooks: [WishBook!]!
 }
 
 type Mutation {
@@ -14,6 +15,9 @@ type Mutation {
     createOwnBook(data: OwnBookCreateInput!): OwnBook!
     deleteOwnBook(id: ID!): OwnBook!
     updateOwnBook(id: ID!, data: UpdateOwnBookInput!): OwnBook!
+    createWishBook(data: WishBookCreateInput!): WishBook!
+    deleteWishBook(id: ID!): WishBook!
+    updateWishBook(id: ID!, data: WishBookUpdateInput!): WishBook!
 }
 
 #type Subscription {
@@ -89,6 +93,18 @@ type WishBook  {
     author: String
     genre: Int
     user: User!
+}
+
+input WishBookCreateInput {
+    name: String!
+    author: String!
+    genre: Int
+}
+
+input WishBookUpdateInput {
+    name: String
+    author: String
+    genre: Int
 }
 
 enum MutationType {

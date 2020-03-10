@@ -53,7 +53,28 @@ const query = {
             opArgs,
             info
         )
+    },
+
+    wishBooks(parent, args, {
+        prisma,
+        request
+    }, info) {
+        const userId = getUserId(request)
+
+        const opArgs = {
+            where: {
+                user: {
+                    id: userId,
+                }
+            }
+        }
+
+        return prisma.query.wishBooks(
+            opArgs,
+            info
+        )
     }
+
 
 };
 
