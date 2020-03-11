@@ -46,7 +46,6 @@ test('Should create a new own book', async () => {
     expect(data.createOwnBook.genre).toBe(1);
     expect(data.createOwnBook.imageId).toBe('1451252125');
     expect(data.createOwnBook.sharingType).toBe(1);
-    expect(1).toBe(1);
 })
 
 test('should be able update own book', async () => {
@@ -86,7 +85,6 @@ test('should be able update own book', async () => {
     expect(data.updateOwnBook.genre).toBe(10)
     expect(data.updateOwnBook.sharingType).toBe(11)
     expect(data.updateOwnBook.imageId).toBe('updated image')
-
 
     expect(exists).toBe(true)
 })

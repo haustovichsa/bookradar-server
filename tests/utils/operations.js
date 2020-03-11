@@ -89,6 +89,42 @@ const updateOwnBook = gql `
     }
 `
 
+const createWishBook = gql `
+    mutation($data: WishBookCreateInput!) {
+        createWishBook(
+            data: $data
+        ) {
+            name
+            author
+            genre
+        }
+    }
+`
+
+const deleteWishBook = gql `
+    mutation($id: ID!) {
+        deleteWishBook(
+            id: $id
+        ){
+            id
+        }
+    }
+`
+
+const updateWishBook = gql `
+    mutation($id: ID!, $data: WishBookUpdateInput!) {
+        updateWishBook(
+            id: $id,
+            data: $data
+        ) {
+            id
+            name
+            author
+            genre
+        }
+    }
+`
+
 export {
     createUser,
     login,
@@ -97,4 +133,7 @@ export {
     createOwnBook,
     deleteOwnBook,
     updateOwnBook,
+    createWishBook,
+    deleteWishBook,
+    updateWishBook,
 }
