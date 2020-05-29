@@ -7,7 +7,7 @@ const getUsers = gql `
         users {
             id
             name
-            email
+            email,
         }
     }
 `
@@ -125,6 +125,16 @@ const updateWishBook = gql `
     }
 `
 
+const searchBookByNameOrAuthor = gql `
+    query($query: String!) {
+        searchBookByNameOrAuthor(query: $query) {
+            id,
+            name,
+            author,
+        }
+    }
+`
+
 export {
     createUser,
     login,
@@ -136,4 +146,5 @@ export {
     createWishBook,
     deleteWishBook,
     updateWishBook,
+    searchBookByNameOrAuthor,
 }

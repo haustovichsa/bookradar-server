@@ -34,6 +34,54 @@ const ownBookOne = {
     ownBook: undefined
 }
 
+const ownBook1 = {
+    input: {
+        name: 'Первая любовь Повести',
+        author: 'Тургенев',
+        published_year: 1990,
+        genre: 1,
+        imageId: '15125-51512-2352355',
+        sharingType: 1,
+    },
+    ownBook: undefined
+}
+
+const ownBook2 = {
+    input: {
+        name: 'Отцы и дети',
+        author: 'Иван Тургенев',
+        published_year: 1990,
+        genre: 1,
+        imageId: '15125-51512-745737',
+        sharingType: 1,
+    },
+    ownBook: undefined
+}
+
+const ownBook3 = {
+    input: {
+        name: 'Война и мир',
+        author: 'Толстой',
+        published_year: 1990,
+        genre: 1,
+        imageId: '15125-51512-5253666',
+        sharingType: 1,
+    },
+    ownBook: undefined
+}
+
+const ownBook4 = {
+    input: {
+        name: 'Война и мир',
+        author: 'Лев Толстой',
+        published_year: 1990,
+        genre: 1,
+        imageId: '15125-51512-5253666',
+        sharingType: 1,
+    },
+    ownBook: undefined
+}
+
 const wishBookOne = {
     input: {
         name: 'book one',
@@ -44,6 +92,7 @@ const wishBookOne = {
 }
 
 const seedDatabase = async () => {
+    jest.setTimeout(20000);
     // delete test data
     await prisma.mutation.deleteManyUsers()
     await prisma.mutation.deleteManyWishBooks()
@@ -68,6 +117,7 @@ const seedDatabase = async () => {
     }, process.env.JWT_SECRET)
 
 
+    // CRATE OWN BOOKS
     // create own book one
     ownBookOne.ownBook = await prisma.mutation.createOwnBook({
         data: {
@@ -80,6 +130,43 @@ const seedDatabase = async () => {
         }
     })
 
+    // create own book1
+    ownBook1.ownBook = await prisma.mutation.createOwnBook({
+        data: {
+            ...ownBook1.input,
+            user: {
+                connect: {
+                    id: userOne.user.id
+                }
+            }
+        }
+    })
+
+    // create own book2
+    ownBook2.ownBook = await prisma.mutation.createOwnBook({
+        data: {
+            ...ownBook2.input,
+            user: {
+                connect: {
+                    id: userOne.user.id
+                }
+            }
+        }
+    })
+
+    // create own book3
+    ownBook3.ownBook = await prisma.mutation.createOwnBook({
+        data: {
+            ...ownBook3.input,
+            user: {
+                connect: {
+                    id: userOne.user.id
+                }
+            }
+        }
+    })
+
+    // CREATE WISH BOOK
      // create wish book one
      wishBookOne.wishBook = await prisma.mutation.createWishBook({
         data: {
@@ -95,5 +182,5 @@ const seedDatabase = async () => {
 
 export {
     seedDatabase as
-    default, userOne, ownBookOne, wishBookOne
+    default, userOne, ownBookOne, wishBookOne, ownBook1, ownBook2, ownBook3
 }

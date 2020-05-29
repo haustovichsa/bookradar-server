@@ -1,6 +1,26 @@
 import getUserId from '../utils/getUserId'
 
 const query = {
+    searchBookByNameOrAuthor(parent, args, {
+        prisma
+    }, info) {
+        if (args.query.length <= 3) {
+            return Promise.resolve([])
+        }
+        const opArgs = {
+            where: {
+                OR: [{
+                    name_contains: args.query
+                },
+                {
+                    author_contains: args.query
+                }]
+            }
+        }
+
+        return prisma.query.ownBooks(opArgs, info)
+    },
+
     users(parent, args, {
         prisma
     }, info) {
