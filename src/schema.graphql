@@ -5,7 +5,7 @@ type Query {
     me: User!
     ownBooks: [OwnBook!]!
     wishBooks: [WishBook!]!
-    searchBookByNameOrAuthor(query: String!): [OwnBook!]!
+    searchBooksByNameOrAuthor(query: String!): [OwnBook!]!
 }
 
 type Mutation {

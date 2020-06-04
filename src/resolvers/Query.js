@@ -1,7 +1,7 @@
 import getUserId from '../utils/getUserId'
 
 const query = {
-    searchBookByNameOrAuthor(parent, args, {
+    searchBooksByNameOrAuthor(parent, args, {
         prisma,
         request
     }, info) {

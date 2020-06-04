@@ -126,9 +126,9 @@ const updateWishBook = gql `
     }
 `
 
-const searchBookByNameOrAuthor = gql `
+const searchBooksByNameOrAuthor = gql `
     query($query: String!) {
-        searchBookByNameOrAuthor(query: $query) {
+        searchBooksByNameOrAuthor(query: $query) {
             id,
             name,
             author,
@@ -147,5 +147,5 @@ export {
     createWishBook,
     deleteWishBook,
     updateWishBook,
-    searchBookByNameOrAuthor,
+    searchBooksByNameOrAuthor,
 }
