@@ -42,6 +42,7 @@ const ownBook1 = {
         genre: 1,
         imageId: '15125-51512-2352355',
         sharingType: 1,
+        search: 'первая любовь повести тургенев'
     },
     ownBook: undefined
 }
@@ -54,6 +55,7 @@ const ownBook2 = {
         genre: 1,
         imageId: '15125-51512-745737',
         sharingType: 1,
+        search: 'отцы и дети иван тургенев'
     },
     ownBook: undefined
 }
@@ -66,6 +68,7 @@ const ownBook3 = {
         genre: 1,
         imageId: '15125-51512-5253666',
         sharingType: 1,
+        search: 'война и мир толстой'
     },
     ownBook: undefined
 }
@@ -78,6 +81,7 @@ const ownBook4 = {
         genre: 1,
         imageId: '15125-51512-5253666',
         sharingType: 1,
+        search: 'война и мир лев толстой'
     },
     ownBook: undefined
 }
@@ -166,6 +170,18 @@ const seedDatabase = async () => {
         }
     })
 
+    // create own book4
+    ownBook4.ownBook = await prisma.mutation.createOwnBook({
+        data: {
+            ...ownBook4.input,
+            user: {
+                connect: {
+                    id: userOne.user.id
+                }
+            }
+        }
+    })
+
     // CREATE WISH BOOK
      // create wish book one
      wishBookOne.wishBook = await prisma.mutation.createWishBook({
@@ -182,5 +198,5 @@ const seedDatabase = async () => {
 
 export {
     seedDatabase as
-    default, userOne, ownBookOne, wishBookOne, ownBook1, ownBook2, ownBook3
+    default, userOne, userTwo, ownBookOne, wishBookOne, ownBook1, ownBook2, ownBook3
 }

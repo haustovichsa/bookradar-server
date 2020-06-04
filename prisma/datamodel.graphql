@@ -17,6 +17,7 @@ type OwnBook  {
   imageId: String
   sharingType: Int #exchange temporary give_forever [0, 1, 2]
   user: User! @relation(name: "OwnBookToUser", onDelete: SET_NULL)
+  search: String
 }
 
 type WishBook  {

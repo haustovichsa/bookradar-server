@@ -52,6 +52,7 @@ const createOwnBook = gql `
         createOwnBook(
             data: $data
         ) {
+            id
             name
             author
             published_year

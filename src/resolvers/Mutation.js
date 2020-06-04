@@ -92,7 +92,8 @@ const mutation = {
                     connect: {
                         id: userId
                     }
-                }
+                },
+                search: `${args.data.name.toLowerCase()} ${args.data.author.toLowerCase()}`
             }
         }, info)
     },
@@ -127,22 +128,27 @@ const mutation = {
     }, info) {
         const userId = getUserId(request)
 
-        const ownBookExists = await prisma.exists.OwnBook({
-            id: args.id,
-            user: {
-                id: userId
+        const ownBook = await prisma.query.ownBooks({
+            where: {
+                AND: [
+                    { id: args.id},
+                    { user: { id: userId } }
+                ]
             }
         })
 
-        if (!ownBookExists) {
+        if (!ownBook) {
             throw new Error('Unable to update own book')
         }
 
         return prisma.mutation.updateOwnBook({
             where: {
                 id: args.id
-            },
-            data: args.data
+            }, 
+            data: {
+                ...args.data,
+                search: `${(args.data.name || ownBook[0].name || '').toLowerCase()} ${(args.data.author || ownBook[0].author || '').toLowerCase()}`
+            }
         })
     },
 

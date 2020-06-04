@@ -70,6 +70,7 @@ type OwnBook implements Node {
   imageId: String
   sharingType: Int
   user: User!
+  search: String
 }
 
 """A connection to a list of items."""
@@ -90,6 +91,7 @@ input OwnBookCreateInput {
   genre: Int
   imageId: String
   sharingType: Int
+  search: String
   user: UserCreateOneWithoutOwnBooksInput!
 }
 
@@ -106,6 +108,7 @@ input OwnBookCreateWithoutUserInput {
   genre: Int
   imageId: String
   sharingType: Int
+  search: String
 }
 
 """An edge in a connection."""
@@ -132,6 +135,8 @@ enum OwnBookOrderByInput {
   imageId_DESC
   sharingType_ASC
   sharingType_DESC
+  search_ASC
+  search_DESC
 }
 
 type OwnBookPreviousValues {
@@ -142,6 +147,7 @@ type OwnBookPreviousValues {
   genre: Int
   imageId: String
   sharingType: Int
+  search: String
 }
 
 input OwnBookScalarWhereInput {
@@ -379,6 +385,46 @@ input OwnBookScalarWhereInput {
 
   """All values greater than or equal the given value."""
   sharingType_gte: Int
+  search: String
+
+  """All values that are not equal to given value."""
+  search_not: String
+
+  """All values that are contained in given list."""
+  search_in: [String!]
+
+  """All values that are not contained in given list."""
+  search_not_in: [String!]
+
+  """All values less than the given value."""
+  search_lt: String
+
+  """All values less than or equal the given value."""
+  search_lte: String
+
+  """All values greater than the given value."""
+  search_gt: String
+
+  """All values greater than or equal the given value."""
+  search_gte: String
+
+  """All values containing the given string."""
+  search_contains: String
+
+  """All values not containing the given string."""
+  search_not_contains: String
+
+  """All values starting with the given string."""
+  search_starts_with: String
+
+  """All values not starting with the given string."""
+  search_not_starts_with: String
+
+  """All values ending with the given string."""
+  search_ends_with: String
+
+  """All values not ending with the given string."""
+  search_not_ends_with: String
 }
 
 type OwnBookSubscriptionPayload {
@@ -425,6 +471,7 @@ input OwnBookUpdateInput {
   genre: Int
   imageId: String
   sharingType: Int
+  search: String
   user: UserUpdateOneRequiredWithoutOwnBooksInput
 }
 
@@ -435,6 +482,7 @@ input OwnBookUpdateManyDataInput {
   genre: Int
   imageId: String
   sharingType: Int
+  search: String
 }
 
 input OwnBookUpdateManyMutationInput {
@@ -444,6 +492,7 @@ input OwnBookUpdateManyMutationInput {
   genre: Int
   imageId: String
   sharingType: Int
+  search: String
 }
 
 input OwnBookUpdateManyWithoutUserInput {
@@ -470,6 +519,7 @@ input OwnBookUpdateWithoutUserDataInput {
   genre: Int
   imageId: String
   sharingType: Int
+  search: String
 }
 
 input OwnBookUpdateWithWhereUniqueWithoutUserInput {
@@ -718,6 +768,46 @@ input OwnBookWhereInput {
 
   """All values greater than or equal the given value."""
   sharingType_gte: Int
+  search: String
+
+  """All values that are not equal to given value."""
+  search_not: String
+
+  """All values that are contained in given list."""
+  search_in: [String!]
+
+  """All values that are not contained in given list."""
+  search_not_in: [String!]
+
+  """All values less than the given value."""
+  search_lt: String
+
+  """All values less than or equal the given value."""
+  search_lte: String
+
+  """All values greater than the given value."""
+  search_gt: String
+
+  """All values greater than or equal the given value."""
+  search_gte: String
+
+  """All values containing the given string."""
+  search_contains: String
+
+  """All values not containing the given string."""
+  search_not_contains: String
+
+  """All values starting with the given string."""
+  search_starts_with: String
+
+  """All values not starting with the given string."""
+  search_not_starts_with: String
+
+  """All values ending with the given string."""
+  search_ends_with: String
+
+  """All values not ending with the given string."""
+  search_not_ends_with: String
   user: UserWhereInput
 }
 

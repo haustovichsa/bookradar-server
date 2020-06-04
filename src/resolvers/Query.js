@@ -2,19 +2,23 @@ import getUserId from '../utils/getUserId'
 
 const query = {
     searchBookByNameOrAuthor(parent, args, {
-        prisma
+        prisma,
+        request
     }, info) {
+        const userId = getUserId(request);
+
         if (args.query.length <= 3) {
             return Promise.resolve([])
         }
+
+        const queries = args.query.split(' ')
+
         const opArgs = {
             where: {
-                OR: [{
-                    name_contains: args.query
-                },
-                {
-                    author_contains: args.query
-                }]
+                AND: [
+                    ...queries.map(_query => ({ search_contains: _query.toLowerCase() })),
+                    { user: { id_not: userId } }
+                ]
             }
         }
 
